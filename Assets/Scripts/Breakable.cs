@@ -20,7 +20,20 @@ public class Breakable : MonoBehaviour {
         Rigidbodies = new Rigidbody[Pieces.Length];
     }
 
-    void FixedUpdate() {
+    /*
+     You are from the apocalyptic future Jan 21 2017
+     Nearly all human life on Earth has been lost to the AI singularity
+     Unfortunately, your cleaning business has no more rooms to clean
+     Use your trusty time machine to destroy rooms so you can get more business in the future
+
+     Bonuses:
+     Few explosions (1-5)
+     Longest streak without explosions
+     Average streak without explosions
+     Full destruction
+     */
+
+    void Update() {
         if (Rigidbodies.Length > 0) {
             // exploding
             if (Exploded && Rigidbodies[0] == null) {
@@ -40,8 +53,8 @@ public class Breakable : MonoBehaviour {
             if (RigidbodyInfosToSet != null && RigidbodyInfosToSet.Length > 0) {
                 // main body
                 var mainInfo = RigidbodyInfosToSet[RigidbodyInfosToSet.Length - 1];
-                transform.position = mainInfo.Position;
-                transform.rotation = mainInfo.Rotation;
+                transform.localPosition = mainInfo.Position;
+                transform.localRotation = mainInfo.Rotation;
                 Rigidbody.velocity = mainInfo.Velocity;
                 Rigidbody.angularVelocity = mainInfo.AngularVelocity;
                 // pieces
@@ -50,8 +63,8 @@ public class Breakable : MonoBehaviour {
                     var rb = Rigidbodies[i];
                     var info = RigidbodyInfosToSet[i];
                     if (info != null) {
-                        piece.transform.position = info.Position;
-                        piece.transform.rotation = info.Rotation;
+                        piece.transform.localPosition = info.Position;
+                        piece.transform.localRotation = info.Rotation;
                         if (rb != null) {
                             rb.velocity = info.Velocity;
                             rb.angularVelocity = info.AngularVelocity;

@@ -8,7 +8,7 @@ public class TimeManager : Manager<TimeManager> {
 
     public float VirtualTime = 0;
 
-    void Update() {
+    void FixedUpdate() {
         VirtualTime += Time.deltaTime;
     }
     
@@ -21,6 +21,7 @@ public class TimeManager : Manager<TimeManager> {
     }
 
     public void GoToTime(float time, Action afterDone = null) {
+        StopCoroutines();
         if (time < VirtualTime) {
             ReverseTime(VirtualTime - time, afterDone);
         } else if (time > VirtualTime) {
@@ -33,17 +34,23 @@ public class TimeManager : Manager<TimeManager> {
     }
 
     public void ReverseTime(float secondsToReverse, Action afterReverse = null) {
+        StopCoroutines();
         MemoManager.Inst.RevertToTime(VirtualTime - secondsToReverse);
         if (afterReverse != null) {
             afterReverse();
         }
     }
-
+    
     public void SkipTime(float secondsToSkip, Action afterSkip = null) {
-        StartCoroutine(SkipTimeEnumerator(secondsToSkip, afterSkip));
+        StopCoroutines();
+        StartCoroutine(SkipTimeCoroutine(secondsToSkip, afterSkip));
     }
 
-    public IEnumerator SkipTimeEnumerator(float secondsToSkip, Action afterSkip) {
+    public void StopCoroutines() {
+        StopCoroutine("SkipTimeCoroutine");
+    }
+
+    public IEnumerator SkipTimeCoroutine(float secondsToSkip, Action afterSkip) {
         var timestep = Time.fixedDeltaTime;
         Time.timeScale = Math.Min(secondsToSkip / timestep, 100); // timescale can only go to 100 :[
         var t = 0f;
@@ -51,7 +58,7 @@ public class TimeManager : Manager<TimeManager> {
             t += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
-        Time.timeScale = 1;
+        Time.timeScale = 0.001f;
         if (afterSkip != null) {
             afterSkip();
         }

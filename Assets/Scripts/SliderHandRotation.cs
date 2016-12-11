@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class SliderHandRotation : MonoBehaviour {
-    public Slider Slider;
+    public TimeSlider Slider;
 
     public Image BigHand;
     public float BigHandRotation;
@@ -18,18 +18,24 @@ public class SliderHandRotation : MonoBehaviour {
     [Range(0.01f, 0.25f)]
     public float RotationSpeed = 0.1f;
 
+    public Image PlayImage;
+
     void Awake() {
         if (Slider == null) {
-            Slider = GetComponent<Slider>();
+            Slider = GetComponent<TimeSlider>();
         }
     }
 
-    void FixedUpdate() {
+    void Update() {
         var bigHandRotation = Slider.value * -360 / BigHandPeriod;
         var smallHandRotation = Slider.value * -360 / SmallHandPeriod;
         BigHandRotation = Mathf.Lerp(BigHandRotation, bigHandRotation, RotationSpeed);
         SmallHandRotation = Mathf.Lerp(SmallHandRotation, smallHandRotation, RotationSpeed);
-        BigHand.transform.rotation = Quaternion.Euler(BigHand.transform.rotation.eulerAngles.withZ(BigHandRotation));
-        SmallHand.transform.rotation = Quaternion.Euler(SmallHand.transform.rotation.eulerAngles.withZ(SmallHandRotation));
+        BigHand.transform.localRotation = Quaternion.Euler(0, 0, BigHandRotation);
+        SmallHand.transform.localRotation = Quaternion.Euler(0, 0, SmallHandRotation);
+        // hands vs play
+        PlayImage.gameObject.SetActive(!(Slider.AutoPlaying || Slider.Held));
+        BigHand.gameObject.SetActive(Slider.AutoPlaying || Slider.Held);
+        SmallHand.gameObject.SetActive(Slider.AutoPlaying || Slider.Held);
     }
 }

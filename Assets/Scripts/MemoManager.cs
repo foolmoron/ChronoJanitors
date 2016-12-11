@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -68,8 +69,8 @@ public class MemoManager : Manager<MemoManager> {
                 var piece = breakable.Value.Pieces[i];
                 var rb = breakable.Value.Rigidbodies[i];
                 infos[i] = new Memo.RigidbodyInfo {
-                    Position = piece.transform.position,
-                    Rotation = piece.transform.rotation,
+                    Position = piece.transform.localPosition,
+                    Rotation = piece.transform.localRotation,
                     Velocity = rb != null ? rb.velocity : Vector3.zero,
                     AngularVelocity = rb != null ? rb.angularVelocity : Vector3.zero,
                 };
@@ -78,8 +79,8 @@ public class MemoManager : Manager<MemoManager> {
             var mainPiece = breakable.Value.gameObject;
             var mainRB = breakable.Value.Rigidbody;
             var mainInfos = new Memo.RigidbodyInfo {
-                Position = mainPiece.transform.position,
-                Rotation = mainPiece.transform.rotation,
+                Position = mainPiece.transform.localPosition,
+                Rotation = mainPiece.transform.localRotation,
                 Velocity = mainRB.velocity,
                 AngularVelocity = mainRB.angularVelocity,
             };
@@ -102,10 +103,11 @@ public class MemoManager : Manager<MemoManager> {
         }
     }
 
-    void Update() {
-        TimeSinceMemo += Time.deltaTime;
+    void FixedUpdate() {
+        TimeSinceMemo += Time.fixedDeltaTime;
         if (TimeSinceMemo >= MemoInterval) {
             RecordMemo();
+            var m = memos[memos.Count - 1];
             TimeSinceMemo -= MemoInterval;
         }
     }
@@ -120,11 +122,12 @@ public class MemoManager : Manager<MemoManager> {
         // add new memo for current state
         RecordMemo();
         // lerp memo based on desired time
-        var lerpedMemo = Memo.Lerp(memos[index], memos[index + 1], (time - memos[index].Time) / (memos[index + 1].Time - memos[index].Time));
+        var lerp = (time - memos[index].Time) / (memos[index + 1].Time - memos[index].Time);
+        var lerpedMemo = Memo.Lerp(memos[index], memos[index + 1], lerp);
         // apply memo and set times
         ApplyMemo(lerpedMemo);
         TimeManager.Inst.VirtualTime = lerpedMemo.Time;
-        TimeSinceMemo = 0;
+        TimeSinceMemo = lerp * MemoInterval;
         // clear all future memos
         for (int i = index + 1; i < memos.Count;) {
             memos.RemoveAt(i);

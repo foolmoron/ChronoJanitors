@@ -1,35 +1,52 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class TimeSlider : Slider {
-    public bool UpdateByTime = true;
+    public bool AutoPlaying;
+    public bool Held;
+
+    float downTime = float.NegativeInfinity;
+    float prevValue;
 
     protected override void Awake() {
         base.Awake();
         onValueChanged.AddListener(val => {
-            if (!UpdateByTime) {
-                TimeManager.Inst.GoToTime(val);
-            }
+            downTime = float.NegativeInfinity;
+            TimeManager.Inst.GoToTime(val);
         });
-
     }
 
     public override void OnPointerDown(PointerEventData e) {
+        var veryPrevValue = value;
         base.OnPointerDown(e);
-        UpdateByTime = false;
+        downTime = Time.realtimeSinceStartup;
+        if (veryPrevValue == value && prevValue != value) {
+            onValueChanged.Invoke(value);
+        } else if (prevValue != value) {
+            downTime = float.NegativeInfinity;
+        }
+        AutoPlaying = false;
+        Held = true;
     }
 
     public override void OnPointerUp(PointerEventData e) {
         base.OnPointerUp(e);
-        UpdateByTime = true;
+        if (Time.realtimeSinceStartup - downTime < 0.3f) {
+            // clicked
+            AutoPlaying = true;
+        }
+        Held = false;
     }
 
-    void FixedUpdate() {
-        if (UpdateByTime) {
-            value = TimeManager.Inst.VirtualTime;
+    void Update() {
+        if (AutoPlaying) {
+            value += Time.fixedDeltaTime;
+            onValueChanged.Invoke(value);
         }
+        prevValue = value;
     }
 }
