@@ -84,4 +84,21 @@ public static class ArrayExtensions {
         }
         return array;
     }
+
+    public static int FindNearestSorted<T>(this IList<T> array, float value, Func<T, float> metric) {
+        // binary search, requires already sorted list
+        var first = 0;
+        var last = array.Count - 1;
+        while (((last - first) / 2) > 0) {
+            var middle = first + (last - first) / 2;
+            if (metric(array[middle]) < value)
+                first = middle + 1;
+            else
+                last = middle;
+        }
+        var diffPrev = first > 0 ? Math.Abs(metric(array[first - 1]) - value) : Mathf.Infinity;
+        var diffFirst = Math.Abs(metric(array[first]) - value);
+        var diffLast = Math.Abs(metric(array[last]) - value);
+        return (diffFirst <= diffLast) ? (diffPrev < diffFirst) ? first - 1 : first : last;
+    }
 }

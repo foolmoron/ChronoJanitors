@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class BreakableManager : Manager<BreakableManager> {
 
+    public GameObject BreakableContainer;
     public Rigidbody[] Rigibodies;
     
-	void Start () {
+	void Awake() {
         // get all child rigidbodies
-        Rigibodies = GetComponentsInChildren<Rigidbody>();
-
+        Rigibodies = BreakableContainer.GetComponentsInChildren<Rigidbody>();
     }
 	
 	public void AddExplosionForce (float explosionForce, Vector3 explosionPosition, float explosionRadius) {
