@@ -53,8 +53,6 @@ public class MemoManager : Manager<MemoManager> {
     void Start() {
         var paths = new List<string>();
         memos.Clear();
-        foreach (var child in BreakableManager.Inst.BreakableContainer.transform) {
-        }
         RecordMemo();
     }
 

@@ -7,6 +7,8 @@ public class Breakable : MonoBehaviour {
 
     [Range(0, 10)]
     public float ExplodeForce = 1f;
+    [Range(0, 5)]
+    public float Height = 1f;
     
     public GameObject[] Pieces;
     public Rigidbody[] Rigidbodies;
@@ -63,6 +65,7 @@ public class Breakable : MonoBehaviour {
                 for (int i = 0; i < Pieces.Length; i++) {
                     Pieces[i].AddComponent<Rigidbody>(); // this doesn't return a rigidbody component properly so we have to GetComponent
                     Rigidbodies[i] = Pieces[i].GetComponent<Rigidbody>();
+                    Rigidbodies[i].AddExplosionForce(ExplodeForce * 100, transform.position, 10f);
                 }
             } else if (!Exploded && Rigidbodies[0] != null) {
                 // remove rigidbodies to combine object again
@@ -100,7 +103,7 @@ public class Breakable : MonoBehaviour {
     }
     
     void OnDrawGizmosSelected() {
-        Gizmos.color = Color.red.withAlpha(0.5f);
-        Gizmos.DrawCube(transform.position, transform.TransformVector(new Vector3(1f, 0.05f, 1f)));
+        Gizmos.color = Color.red.withAlpha(0.35f);
+        Gizmos.DrawCube(transform.position.plusY(Height/2), new Vector3(1f, Height, 1f));
     }
 }

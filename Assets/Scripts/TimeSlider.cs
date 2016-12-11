@@ -29,7 +29,11 @@ public class TimeSlider : Slider {
         } else if (prevValue != value) {
             downTime = float.NegativeInfinity;
         }
+        var wasAutoPlaying = AutoPlaying;
         AutoPlaying = false;
+        if (wasAutoPlaying) {
+            downTime = float.NegativeInfinity;
+        }
         Held = true;
     }
 
