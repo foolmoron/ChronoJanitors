@@ -20,22 +20,3 @@ Assets/UnityVS/
 *.suo
 ProjectSettings/ProjectVersion.txt
 Assets/Standard Assets/
-Assets/Chronos/
-Assets/Reaktion/
-Assets/Editor/ImageEffects/
-Assets/Gizmos/Chronos/
-Assets/ShaderForge/
-Assets/MidiJack/
-Assets/Editor/CrossPlatformInput/
-Assets/OscJack/
-Assets/Standard Assets.meta
-Assets/ShaderForge.meta
-Assets/Reaktion.meta
-Assets/MidiJack.meta
-Assets/OscJack.meta
-Assets/Editor/ImageEffects.meta
-Assets/Gizmos/Chronos.meta
-Assets/Chronos.meta
-Assets/Editor/CrossPlatformInput.meta
-Assets/ReaktionTest/
-Assets/ReaktionTest.meta
