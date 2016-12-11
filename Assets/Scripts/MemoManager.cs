@@ -17,6 +17,26 @@ public class Memo {
     public float Time;
     public float[] BackgroundParticleTimes;
     public Dictionary<string, RigidbodyInfo[]> BreakableRigidbodyInfos = new Dictionary<string, RigidbodyInfo[]>();
+
+    public static Memo Lerp(Memo memo1, Memo memo2, float t) {
+        var memo = new Memo {
+            Time = Mathf.Lerp(memo1.Time, memo2.Time, t),
+            BackgroundParticleTimes = memo1.BackgroundParticleTimes.Map(memo2.BackgroundParticleTimes, (time1, time2) => Mathf.Lerp(time1, time2, t)),
+        };
+        foreach (var breakableRigidbodyInfo in memo1.BreakableRigidbodyInfos) {
+            memo.BreakableRigidbodyInfos[breakableRigidbodyInfo.Key] =
+                memo1.BreakableRigidbodyInfos[breakableRigidbodyInfo.Key].Map(
+                    memo2.BreakableRigidbodyInfos[breakableRigidbodyInfo.Key],
+                    (info1, info2) => new RigidbodyInfo {
+                        Position = Vector3.Lerp(info1.Position, info2.Position, t),
+                        Rotation = Quaternion.Slerp(info1.Rotation, info2.Rotation, t),
+                        Velocity = Vector3.Lerp(info1.Velocity, info2.Velocity, t),
+                        AngularVelocity = Vector3.Lerp(info1.AngularVelocity, info2.AngularVelocity, t),
+                    }
+                );
+        }
+        return memo;
+    }
 }
 
 public class MemoManager : Manager<MemoManager> {
@@ -97,12 +117,14 @@ public class MemoManager : Manager<MemoManager> {
         }
         // get nearest memo to desired time
         var index = memos.FindNearestSorted(time, memo => memo.Time);
-        var nearestMemo = memos[index];
-        // set new virtual time
-        TimeManager.Inst.VirtualTime = nearestMemo.Time;
+        // add new memo for current state
+        RecordMemo();
+        // lerp memo based on desired time
+        var lerpedMemo = Memo.Lerp(memos[index], memos[index + 1], (time - memos[index].Time) / (memos[index + 1].Time - memos[index].Time));
+        // apply memo and set times
+        ApplyMemo(lerpedMemo);
+        TimeManager.Inst.VirtualTime = lerpedMemo.Time;
         TimeSinceMemo = 0;
-        // apply memo
-        ApplyMemo(nearestMemo);
         // clear all future memos
         for (int i = index + 1; i < memos.Count;) {
             memos.RemoveAt(i);

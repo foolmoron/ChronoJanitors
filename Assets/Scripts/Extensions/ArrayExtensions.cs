@@ -33,6 +33,14 @@ public static class ArrayExtensions {
         return newArray;
     }
 
+    public static TReturn[] Map<TArray1, TArray2, TReturn>(this IList<TArray1> array1, IList<TArray2> array2, Func<TArray1, TArray2, TReturn> map) {
+        var newArray = new TReturn[array1.Count];
+        for (int i = 0; i < array1.Count; i++) {
+            newArray[i] = map(array1[i], array2[i]);
+        }
+        return newArray;
+    }
+
     public static TReturn[] Map<TArray, TReturn>(this IList<TArray> array, Func<TArray, TReturn> map, TReturn[] preallocatedArray) {
         for (int i = 0; i < preallocatedArray.Length; i++) {
             preallocatedArray[i] = i < array.Count ? map(array[i]) : default(TReturn);
