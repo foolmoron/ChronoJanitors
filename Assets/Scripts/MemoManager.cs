@@ -18,6 +18,7 @@ public class Memo {
     public float Time;
     public float[] BackgroundParticleTimes;
     public Dictionary<string, RigidbodyInfo[]> BreakableRigidbodyInfos = new Dictionary<string, RigidbodyInfo[]>();
+    public Dictionary<string, bool> Exploded = new Dictionary<string, bool>();
 
     public static Memo Lerp(Memo memo1, Memo memo2, float t) {
         var memo = new Memo {
@@ -35,6 +36,7 @@ public class Memo {
                         AngularVelocity = Vector3.Lerp(info1.AngularVelocity, info2.AngularVelocity, t),
                     }
                 );
+            memo.Exploded[breakableRigidbodyInfo.Key] = Mathf.Abs(t - memo1.Time) < Mathf.Abs(t - memo2.Time) ? memo1.Exploded[breakableRigidbodyInfo.Key] : memo2.Exploded[breakableRigidbodyInfo.Key];
         }
         return memo;
     }
@@ -87,6 +89,8 @@ public class MemoManager : Manager<MemoManager> {
             infos[breakable.Value.Pieces.Length] = mainInfos;
             // set infos
             memo.BreakableRigidbodyInfos[breakable.Key] = infos;
+            // set exploded
+            memo.Exploded[breakable.Key] = breakable.Value.Exploded;
         }
         memos.Add(memo);
     }
@@ -99,7 +103,9 @@ public class MemoManager : Manager<MemoManager> {
         }
         // breakables
         foreach (var breakableRigidbodyInfo in memo.BreakableRigidbodyInfos) {
-            BreakableManager.Inst.Breakables[breakableRigidbodyInfo.Key].RigidbodyInfosToSet = breakableRigidbodyInfo.Value;
+            var breakable = BreakableManager.Inst.Breakables[breakableRigidbodyInfo.Key];
+            breakable.RigidbodyInfosToSet = breakableRigidbodyInfo.Value;
+            breakable.Exploded = memo.Exploded[breakableRigidbodyInfo.Key];
         }
     }
 

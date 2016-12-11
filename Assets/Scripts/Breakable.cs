@@ -1,8 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Breakable : MonoBehaviour {
+
+    [Range(0, 10)]
+    public float ExplodeForce = 1f;
     
     public GameObject[] Pieces;
     public Rigidbody[] Rigidbodies;
@@ -20,6 +24,24 @@ public class Breakable : MonoBehaviour {
         Rigidbodies = new Rigidbody[Pieces.Length];
     }
 
+    void HandleCollision(Collision collision) {
+        var force = 0f;
+        foreach (var contact in collision.contacts) {
+            force = Mathf.Max(force, Vector3.Dot(contact.normal, collision.relativeVelocity) * Rigidbody.mass * (contact.otherCollider.attachedRigidbody ? contact.otherCollider.attachedRigidbody.mass : 1));
+        }
+        if (force >= ExplodeForce) {
+            Exploded = true;
+        }
+    }
+
+    void OnCollisionEnter(Collision collision) {
+        HandleCollision(collision);
+    }
+
+    void OnCollisionStay(Collision collision) {
+        HandleCollision(collision);
+    }
+
     /*
      You are from the apocalyptic future Jan 21 2017
      Nearly all human life on Earth has been lost to the AI singularity
@@ -31,7 +53,7 @@ public class Breakable : MonoBehaviour {
      Longest streak without explosions
      Average streak without explosions
      Full destruction
-     */
+    */
 
     void Update() {
         if (Rigidbodies.Length > 0) {
@@ -75,5 +97,10 @@ public class Breakable : MonoBehaviour {
             // clear infos after setting
             RigidbodyInfosToSet = null;
         }
+    }
+    
+    void OnDrawGizmosSelected() {
+        Gizmos.color = Color.red.withAlpha(0.5f);
+        Gizmos.DrawCube(transform.position, transform.TransformVector(new Vector3(1f, 0.05f, 1f)));
     }
 }
