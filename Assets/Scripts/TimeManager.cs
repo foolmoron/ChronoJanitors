@@ -2,21 +2,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TimeManager : Manager<TimeManager> {
 
     public float VirtualTime = 0;
 
-    void FixedUpdate() {
+    void Update() {
         VirtualTime += Time.deltaTime;
     }
     
     public void SkipOneSecond() {
-        SkipTime(1);
+        SkipTime(3);
     }
     
     public void ReverseOneSecond() {
-        ReverseTime(1);
+        ReverseTime(3);
+    }
+
+    public void GoToTime(float time, Action afterDone = null) {
+        if (time < VirtualTime) {
+            ReverseTime(VirtualTime - time, afterDone);
+        } else if (time > VirtualTime) {
+            SkipTime(time - VirtualTime, afterDone);
+        } else {
+            if (afterDone != null) {
+                afterDone();
+            }
+        }
     }
 
     public void ReverseTime(float secondsToReverse, Action afterReverse = null) {

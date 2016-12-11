@@ -5,16 +5,18 @@ using UnityEngine;
 public class BreakableManager : Manager<BreakableManager> {
 
     public GameObject BreakableContainer;
-    public Rigidbody[] Rigibodies;
+    public Dictionary<string, Breakable> Breakables = new Dictionary<string, Breakable>();
     
 	void Awake() {
         // get all child rigidbodies
-        Rigibodies = BreakableContainer.GetComponentsInChildren<Rigidbody>();
+	    foreach (var breakable in BreakableContainer.GetComponentsInChildren<Breakable>()) {
+            Breakables[breakable.gameObject.name] = breakable;
+	    }
     }
 	
 	public void AddExplosionForce (float explosionForce, Vector3 explosionPosition, float explosionRadius) {
-	    foreach (var rigibody in Rigibodies) {
-	        rigibody.AddExplosionForce(explosionForce, explosionPosition, explosionRadius);
+	    foreach (var breakable in Breakables.Values) {
+            breakable.Rigidbody.AddExplosionForce(explosionForce, explosionPosition, explosionRadius);
 	    }
 	}
 }
