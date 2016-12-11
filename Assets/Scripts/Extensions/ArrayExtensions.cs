@@ -3,11 +3,16 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class ArrayExtensions {
 
     public static T Random<T>(this IList<T> array) {
         return array[Mathf.FloorToInt(UnityEngine.Random.value * array.Count)];
+    }
+
+    public static T RandomSeeded<T>(this IEnumerable<T> array, System.Random random) {
+        return array.ElementAt(random.Next(array.Count()));
     }
 
     public static int Count<T>(this IList<T> array, Func<T, bool> countPredicate) {
@@ -33,7 +38,7 @@ public static class ArrayExtensions {
         return newArray;
     }
 
-    public static TReturn[] Map<TArray1, TArray2, TReturn>(this IList<TArray1> array1, IList<TArray2> array2, Func<TArray1, TArray2, TReturn> map) {
+    public static TReturn[] MapWith<TArray1, TArray2, TReturn>(this IList<TArray1> array1, IList<TArray2> array2, Func<TArray1, TArray2, TReturn> map) {
         var newArray = new TReturn[array1.Count];
         for (int i = 0; i < array1.Count; i++) {
             newArray[i] = map(array1[i], array2[i]);

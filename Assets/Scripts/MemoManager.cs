@@ -23,11 +23,11 @@ public class Memo {
     public static Memo Lerp(Memo memo1, Memo memo2, float t) {
         var memo = new Memo {
             Time = Mathf.Lerp(memo1.Time, memo2.Time, t),
-            BackgroundParticleTimes = memo1.BackgroundParticleTimes.Map(memo2.BackgroundParticleTimes, (time1, time2) => Mathf.Lerp(time1, time2, t)),
+            BackgroundParticleTimes = memo1.BackgroundParticleTimes.MapWith(memo2.BackgroundParticleTimes, (time1, time2) => Mathf.Lerp(time1, time2, t)),
         };
         foreach (var breakableRigidbodyInfo in memo1.BreakableRigidbodyInfos) {
             memo.BreakableRigidbodyInfos[breakableRigidbodyInfo.Key] =
-                memo1.BreakableRigidbodyInfos[breakableRigidbodyInfo.Key].Map(
+                memo1.BreakableRigidbodyInfos[breakableRigidbodyInfo.Key].MapWith(
                     memo2.BreakableRigidbodyInfos[breakableRigidbodyInfo.Key],
                     (info1, info2) => new RigidbodyInfo {
                         Position = Vector3.Lerp(info1.Position, info2.Position, t),
@@ -51,7 +51,9 @@ public class MemoManager : Manager<MemoManager> {
     public ParticleSystem[] BackgroundParticles;
 
     void Start() {
-        var paths = new List<string>();
+    }
+
+    public void InitMemos() {
         memos.Clear();
         RecordMemo();
     }

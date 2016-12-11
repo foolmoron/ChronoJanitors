@@ -8,10 +8,13 @@ public class BreakableManager : Manager<BreakableManager> {
     public Dictionary<string, Breakable> Breakables = new Dictionary<string, Breakable>();
     
 	void Awake() {
-        // get all child rigidbodies
-	    foreach (var breakable in BreakableContainer.GetComponentsInChildren<Breakable>()) {
+    }
+
+    public void CacheBreakables() {
+        foreach (var breakable in BreakableContainer.GetComponentsInChildren<Breakable>()) {
             Breakables[breakable.gameObject.name] = breakable;
-	    }
+            breakable.Init();
+        }
     }
 	
 	public void AddExplosionForce (float explosionForce, Vector3 explosionPosition, float explosionRadius) {

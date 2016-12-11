@@ -7,8 +7,14 @@ public class Breakable : MonoBehaviour {
 
     [Range(0, 10)]
     public float ExplodeForce = 1f;
+    [Range(1, 5)]
+    public int Width = 1;
+    [Range(1, 5)]
+    public int Length = 1;
     [Range(0, 5)]
     public float Height = 1f;
+    public bool IsStackable;
+    public bool IsTable;
     
     public GameObject[] Pieces;
     public Rigidbody[] Rigidbodies;
@@ -17,13 +23,19 @@ public class Breakable : MonoBehaviour {
     public Memo.RigidbodyInfo[] RigidbodyInfosToSet;
 
     public bool Exploded;
+
+    void Awake() {
+        Init();
+    }
     
-	void Awake() {
-        // get all child rigidbodies
-        Rigidbody = GetComponent<Rigidbody>();
-        Pieces = GetComponentsInChildren<Collider>().Map(child => child.gameObject);
-        // setup rigidbody container
-        Rigidbodies = new Rigidbody[Pieces.Length];
+	public void Init() {
+        if (!Rigidbody) {
+            // get all child rigidbodies
+            Rigidbody = GetComponent<Rigidbody>();
+            Pieces = GetComponentsInChildren<Collider>().Map(child => child.gameObject);
+            // setup rigidbody container
+            Rigidbodies = new Rigidbody[Pieces.Length];
+        }
     }
 
     void HandleCollision(Collision collision) {
@@ -104,6 +116,6 @@ public class Breakable : MonoBehaviour {
     
     void OnDrawGizmosSelected() {
         Gizmos.color = Color.red.withAlpha(0.35f);
-        Gizmos.DrawCube(transform.position.plusY(Height/2), new Vector3(1f, Height, 1f));
+        Gizmos.DrawCube(transform.position + new Vector3((Width - 1)/2f, Height/2, (Length - 1) / 2f), new Vector3(Width, Height, Length));
     }
 }
