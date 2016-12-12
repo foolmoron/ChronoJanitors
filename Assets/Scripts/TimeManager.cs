@@ -8,6 +8,10 @@ public class TimeManager : Manager<TimeManager> {
 
     public float VirtualTime = 0;
 
+    void Awake() {
+        Time.timeScale = 0.001f;
+    }
+
     void FixedUpdate() {
         VirtualTime += Time.deltaTime;
     }
