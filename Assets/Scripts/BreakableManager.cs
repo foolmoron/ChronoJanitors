@@ -16,10 +16,22 @@ public class BreakableManager : Manager<BreakableManager> {
             breakable.Init();
         }
     }
+
+    static void AddExp(Rigidbody rb, float force, Vector3 pos) {
+        var dir = rb.centerOfMass - pos;
+        rb.AddForce(dir.normalized * force);
+        rb.AddTorque(Random.value * force, Random.value * force, Random.value * force);
+    }
 	
-	public void AddExplosionForce (float explosionForce, Vector3 explosionPosition, float explosionRadius) {
+	public void AddExplosionForce (float explosionForce, Vector3 explosionPosition) {
 	    foreach (var breakable in Breakables.Values) {
-            breakable.Rigidbody.AddExplosionForce(explosionForce, explosionPosition, explosionRadius);
+            Debug.Log("Exploding " + breakable.name + " - " + explosionForce + explosionPosition);
+            AddExp(breakable.Rigidbody, explosionForce, explosionPosition);
+	        foreach (var rb in breakable.Rigidbodies) {
+	            if (rb != null) {
+	                AddExp(rb, explosionForce, explosionPosition);
+                }
+	        }
 	    }
 	}
 }
