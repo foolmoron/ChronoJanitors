@@ -39,11 +39,13 @@ public class TimeManager : Manager<TimeManager> {
         if (afterReverse != null) {
             afterReverse();
         }
+        AudioManager.Inst.SetAdvanceRewind(false);
     }
     
     public void SkipTime(float secondsToSkip, Action afterSkip = null) {
         StopCoroutines();
         StartCoroutine(SkipTimeCoroutine(secondsToSkip, afterSkip));
+        AudioManager.Inst.SetAdvanceRewind(true);
     }
 
     public void StopCoroutines() {

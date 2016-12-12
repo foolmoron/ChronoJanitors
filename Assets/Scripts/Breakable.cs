@@ -79,6 +79,7 @@ public class Breakable : MonoBehaviour {
                     Rigidbodies[i] = Pieces[i].GetComponent<Rigidbody>();
                     Rigidbodies[i].AddExplosionForce(ExplodeForce * 100, transform.position, 10f);
                 }
+                AudioManager.Inst.Play("explode");
             } else if (!Exploded && Rigidbodies[0] != null) {
                 // remove rigidbodies to combine object again
                 for (int i = 0; i < Rigidbodies.Length; i++) {

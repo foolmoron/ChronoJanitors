@@ -35,6 +35,7 @@ public class TimeSlider : Slider {
             downTime = float.NegativeInfinity;
         }
         Held = true;
+        AudioManager.Inst.SetAdvanceRewind(null);
     }
 
     public override void OnPointerUp(PointerEventData e) {
@@ -43,11 +44,13 @@ public class TimeSlider : Slider {
             // clicked
             AutoPlaying = true;
         }
+        AudioManager.Inst.SetAdvanceRewind(null);
         Held = false;
     }
 
     void Update() {
         if (AutoPlaying) {
+            AudioManager.Inst.SetAdvanceRewind(true);
             value += Time.fixedDeltaTime;
             if (value >= maxValue) {
                 GameOver.Inst.GameOve = true;

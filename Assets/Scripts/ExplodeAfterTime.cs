@@ -23,7 +23,8 @@ public class ExplodeAfterTime : MonoBehaviour {
 	        // explode
             BreakableManager.Inst.AddExplosionForce(Force, transform.position);
             Destroy(gameObject);
-	    } else if (TimeManager.Inst.VirtualTime < CreationTime) {
+            AudioManager.Inst.Play("explosion");
+        } else if (TimeManager.Inst.VirtualTime < CreationTime) {
 	        Destroy(gameObject);
 	    }
 	}
