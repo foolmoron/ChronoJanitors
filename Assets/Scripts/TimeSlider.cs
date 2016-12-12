@@ -49,6 +49,10 @@ public class TimeSlider : Slider {
     void Update() {
         if (AutoPlaying) {
             value += Time.fixedDeltaTime;
+            if (value >= maxValue) {
+                GameOver.Inst.GameOve = true;
+                return;
+            }
             onValueChanged.Invoke(value);
         }
         prevValue = value;

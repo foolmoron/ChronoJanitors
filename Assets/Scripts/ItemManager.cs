@@ -41,7 +41,7 @@ public class ItemManager : Manager<ItemManager> {
                 var height = 0f;
                 Breakable latestItem = null;
                 while (true) {
-                    if (r.Next(7) == 0) {
+                    if (r.Next(2) == 0) {
                         break;
                     }
                     if (latestItem && !latestItem.IsTable) {

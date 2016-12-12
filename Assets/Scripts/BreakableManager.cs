@@ -25,7 +25,6 @@ public class BreakableManager : Manager<BreakableManager> {
 	
 	public void AddExplosionForce (float explosionForce, Vector3 explosionPosition) {
 	    foreach (var breakable in Breakables.Values) {
-            Debug.Log("Exploding " + breakable.name + " - " + explosionForce + explosionPosition);
             AddExp(breakable.Rigidbody, explosionForce, explosionPosition);
 	        foreach (var rb in breakable.Rigidbodies) {
 	            if (rb != null) {

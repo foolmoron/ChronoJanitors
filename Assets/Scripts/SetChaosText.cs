@@ -5,10 +5,11 @@ using UnityEngine.UI;
 
 public class SetChaosText : MonoBehaviour {
     Text t;
+    public string Prefix;
     void Start() {
         t = GetComponent<Text>();
     }
 	void Update () {
-        t.text = "CHAOS: " + PointsManager.Inst.Points.ToString("0.0");
+        t.text = Prefix + PointsManager.Inst.Points.ToString("0.0");
     }
 }
