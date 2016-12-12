@@ -15,7 +15,8 @@ public class ItemManager : Manager<ItemManager> {
     [Range(0, 10)]
     public float HeightLimit = 4;
 
-    public static int LevelGenerationSeed = 999;
+    public static int LevelGenerationSeed = 0;
+    public int CurrentSeed;
     public List<Breakable>[,] Grid;
 
     void Awake() {
@@ -30,7 +31,8 @@ public class ItemManager : Manager<ItemManager> {
 
     public void GenerateLevel() {
         // randomly arrange level items
-        var r = new System.Random(LevelGenerationSeed); // use this seeded random instead of unity's random
+        CurrentSeed = LevelGenerationSeed > 0 ? LevelGenerationSeed : Mathf.FloorToInt(Random.value * 1000000);
+        var r = new System.Random(CurrentSeed); // use this seeded random instead of unity's random
         for (int x = 0; x < LevelGridSize; x++) {
             for (int y = 0; y < LevelGridSize; y++) {
                 if (Grid[x, y].Count > 0) {
