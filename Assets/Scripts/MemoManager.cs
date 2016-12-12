@@ -17,6 +17,7 @@ public class Memo {
 
     public float Time;
     public float[] BackgroundParticleTimes;
+    public float Chaos;
     public Dictionary<string, RigidbodyInfo[]> BreakableRigidbodyInfos = new Dictionary<string, RigidbodyInfo[]>();
     public Dictionary<string, bool> Exploded = new Dictionary<string, bool>();
 
@@ -24,6 +25,7 @@ public class Memo {
         var memo = new Memo {
             Time = Mathf.Lerp(memo1.Time, memo2.Time, t),
             BackgroundParticleTimes = memo1.BackgroundParticleTimes.MapWith(memo2.BackgroundParticleTimes, (time1, time2) => Mathf.Lerp(time1, time2, t)),
+            Chaos = Mathf.Lerp(memo1.Chaos, memo2.Chaos, t),
         };
         foreach (var breakableRigidbodyInfo in memo1.BreakableRigidbodyInfos) {
             memo.BreakableRigidbodyInfos[breakableRigidbodyInfo.Key] =
@@ -62,6 +64,7 @@ public class MemoManager : Manager<MemoManager> {
         var memo = new Memo {
             Time = TimeManager.Inst.VirtualTime,
             BackgroundParticleTimes = BackgroundParticles.Map(particles => particles.time),
+            Chaos = PointsManager.Inst.Points,
         };
         // breakables
         foreach (var breakable in BreakableManager.Inst.Breakables) {
@@ -107,6 +110,8 @@ public class MemoManager : Manager<MemoManager> {
             breakable.RigidbodyInfosToSet = breakableRigidbodyInfo.Value;
             breakable.Exploded = memo.Exploded[breakableRigidbodyInfo.Key];
         }
+        // etc
+        PointsManager.Inst.Points = memo.Chaos;
     }
 
     void FixedUpdate() {
